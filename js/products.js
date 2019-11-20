@@ -6,13 +6,12 @@ $.getJSON("./metadata/products.json", function(data) {
     showProducts(productList.groups);
 });
 
-document.addEventListener("load", function() {
+$(document).ready(function() {
     var itemsInStorage = JSON.parse(localStorage.getItem("addedItems"));
     if (itemsInStorage) {
         addedProducts.push(...itemsInStorage)
         setItemsInCart();
     };
-    addClickHandlers("buy");
 })
 
 function showProducts(products) {
@@ -20,6 +19,7 @@ function showProducts(products) {
             return cards(item);
         })
     )
+    addClickHandlers("buy");
 };
 
 /**
@@ -229,7 +229,7 @@ function renderCartItems(products) {
 
     var html = `<div class="row mb-4">
                     <div class="col">
-                        <a href="/ws-product-cards/"><- Continue Shopping</a>
+                        <a href="/ws-product-cards"><- Continue Shopping</a>
                     </div>
                 </div>
                 ${productItems.map(product => {

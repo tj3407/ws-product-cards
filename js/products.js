@@ -3,18 +3,20 @@ var addedProducts = [];
 
 $.getJSON("../metadata/products.json", function(data) {
     productList = data;
-    showProducts();
+    showProducts(productList.groups);
 });
 
 $(document).ready(function() {
     var itemsInStorage = JSON.parse(localStorage.getItem("addedItems"));
-    addedProducts.push(...itemsInStorage);
-    setItemsInCart();
+    if (itemsInStorage) {
+        addedProducts.push(...itemsInStorage)
+        setItemsInCart();
+    };
     addClickHandlers();
 })
 
-function showProducts() {
-    $(".row").append(productList.groups.map(item => {
+function showProducts(products) {
+    $(".row").html(products.map(item => {
             return cards(item);
         })
     )
@@ -33,6 +35,7 @@ function cards(product) {
 
     var $cardDiv = document.createElement("div");
     $cardDiv.setAttribute("class", "card");
+    $cardDiv.setAttribute("id", "product-item");
 
     var imageSlider = renderImageCarousel(images, id);
 
@@ -43,7 +46,6 @@ function cards(product) {
     $cardText.setAttribute("class", "card-text");
 
     var productPrice = renderPrice(price);
-    // var buyButton = renderButton()
 
     var $buyButton = document.createElement("button");
     $buyButton.setAttribute("class", "btn btn-dark btn-sm buy-button");
@@ -150,6 +152,9 @@ function renderPrice(price) {
     return $price;
 }
 
+/**
+ * Add event listeners on buy buttons for click
+ */
 function addClickHandlers() {
     var buttons = document.getElementsByClassName("buy-button");
     
@@ -158,9 +163,16 @@ function addClickHandlers() {
     }
 }
 
+/**
+ * 
+ * @param {Event} e 
+ * 
+ * Click handler for buy button
+ */
 function handleClick(e) {
     var id = e.target.id.split("button-")[1];
     var product = productList.groups.find(item => item.id === id);
+
     addedProducts.push(product.id);
     localStorage.setItem("addedItems", JSON.stringify(addedProducts));
 
@@ -170,4 +182,113 @@ function handleClick(e) {
 function setItemsInCart() {
     var itemsInCart = document.querySelector("#checkout-badge");
     itemsInCart.innerText = JSON.parse(localStorage.getItem("addedItems")).length;
+}
+
+document.getElementById("checkout").addEventListener("click", function() {
+    showCheckoutPage();
+})
+
+function showCheckoutPage() {
+    var list = JSON.parse(localStorage.getItem("addedItems"));
+    var productsAddedToCart = {};
+    list.map(item => {
+        if (!productsAddedToCart[item]) {
+            productsAddedToCart[item] = 1;
+        } else {
+            productsAddedToCart[item]++;
+        }
+    })
+
+    $(".container").html(renderCartItems(list));
+}
+
+function renderCartItems(products) {
+    var productItems = products.map(item => productList.groups.find(product => product.id === item));
+    var formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+    });
+
+    var html = `<div class="row mb-4">
+                    <div class="col">
+                        <a href="/"><- Continue Shopping</a>
+                    </div>
+                </div>
+                ${productItems.map(product => {
+                    return (
+                        `<div class="row checkout-list">
+                            <div class="col">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-6 col-md-3">
+                                                <img src=${product.thumbnail.href}>
+                                            </div>
+                                            <div class="col-6 col-md-3 text-left">
+                                                <p class="d-inline-flex">${product.name}</p>
+                                            </div>
+                                            <div class="col-6 col-md-3 text-left">
+                                                <p class="d-inline-flex">${formatter.format(product.price.regular)}</p>
+                                            </div>
+                                            <div class="col-6 col-md-3 text-right">
+                                                <button class="btn btn-dark btn-sm button-remove-${product.id}">Remove</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`
+                    )
+                })}
+                
+                `
+  return html;
+}
+
+function showConfirmAddToCart() {
+    var $modal = document.createElement("div");
+    var $modalDialog = document.createElement("div");
+    var $modalContent = document.createElement("div");
+    var $modalHeader = document.createElement("div");
+    var $modalBody = document.createElement("div");
+    var $modalFooter = document.createElement("div");
+    var $modalTitle = document.createElement("h5");
+    var $closeButton = document.createElement("button");
+
+    $modal.setAttribute("class", "modal fade");
+    $modal.setAttribute("tabindex", "-1");
+    $modal.setAttribute("role", "dialog");
+    $modal.setAttribute("aria-labelledby", "confirmBuy");
+    $modal.setAttribute("aria-hidden", "true");
+    $modal.setAttribute("id", "confirmModal");
+
+    $modalDialog.setAttribute("class", "modal-dialog modal-dialog-centered");
+    $modalDialog.setAttribute("role", "document");
+
+    $modalContent.setAttribute("class", "modal-content");
+
+    $modalHeader.setAttribute("class", "modal-header");
+
+    $modalBody.setAttribute("class", "modal-body");
+    $modalBody.innerText = "Item successfully added to cart."
+
+    $modalFooter.setAttribute("class", "modal-footer");
+
+    $modalTitle.setAttribute("class", "modal-title");
+    $modalTitle.innerText = "Thank you!";
+    $modalHeader.append($modalTitle);
+
+    $closeButton.setAttribute("class", "btn btn-dark");
+    $closeButton.setAttribute("type", "button");
+    $closeButton.setAttribute("data-dismiss", "modal");
+    $closeButton.innerText = "Close";
+    $modalFooter.append($closeButton);
+
+    $modal.append($modalDialog);
+    $modal.append($modalContent);
+    $modal.append($modalHeader);
+    $modal.append($modalBody);
+    $modal.append($modalFooter);
+
+    $(".row").append($modal);
 }

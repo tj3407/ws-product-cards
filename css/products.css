@@ -16,7 +16,6 @@
   max-width: 250px;
   min-height: 400px;
   margin: 10px;
-  cursor: pointer;
 }
 
 .wsui .card-text {
@@ -26,10 +25,18 @@
 .wsui img {
   width: 250px;
   height: 250px;
+  cursor: pointer;
 }
 
 .wsui .price {
   position: absolute;
   bottom: 20px;
+}
+
+.wsui #buy-button {
+    position: absolute;
+    right: 15px;
+    bottom: 15px;
+    width: 100px;
 }
 

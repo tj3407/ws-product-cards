@@ -37,9 +37,16 @@ function cards(product) {
 
     var productPrice = renderPrice(price);
 
+    var $buyButton = document.createElement("button");
+    $buyButton.setAttribute("class", "btn btn-dark btn-sm");
+    $buyButton.setAttribute("type", "button");
+    $buyButton.setAttribute("id", "buy-button");
+    $buyButton.innerText = "Buy";
+
     $cardText.innerHTML = name;
-    $cardText.append(productPrice);
     $cardBody.append($cardText);
+    $cardBody.append(productPrice);
+    $cardBody.append($buyButton);
     $cardDiv.append(imageSlider);
     $cardDiv.append($cardBody);
     $col.append($cardDiv)
@@ -115,6 +122,12 @@ function renderCarouselControl(dir, id) {
     return $control;
 }
 
+/**
+ * 
+ * @param {Object} price 
+ * 
+ * Return a node element of a product price
+ */
 function renderPrice(price) {
     var {regular, selling} = price;
     var $price = document.createElement("span");

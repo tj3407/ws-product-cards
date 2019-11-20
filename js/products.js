@@ -1,13 +1,20 @@
 var productList = {};
+var addedProducts = [];
 
 $.getJSON("../metadata/products.json", function(data) {
     productList = data;
     showProducts();
 });
 
+$(document).ready(function() {
+    var itemsInStorage = JSON.parse(localStorage.getItem("addedItems"));
+    addedProducts.push(...itemsInStorage);
+    setItemsInCart();
+    addClickHandlers();
+})
+
 function showProducts() {
     $(".row").append(productList.groups.map(item => {
-            console.log(item);
             return cards(item);
         })
     )
@@ -36,11 +43,12 @@ function cards(product) {
     $cardText.setAttribute("class", "card-text");
 
     var productPrice = renderPrice(price);
+    // var buyButton = renderButton()
 
     var $buyButton = document.createElement("button");
-    $buyButton.setAttribute("class", "btn btn-dark btn-sm");
+    $buyButton.setAttribute("class", "btn btn-dark btn-sm buy-button");
     $buyButton.setAttribute("type", "button");
-    $buyButton.setAttribute("id", "buy-button");
+    $buyButton.setAttribute("id", `button-${id}`);
     $buyButton.innerText = "Buy";
 
     $cardText.innerHTML = name;
@@ -140,4 +148,26 @@ function renderPrice(price) {
     $price.setAttribute("class", "font-weight-bold d-block price");
 
     return $price;
+}
+
+function addClickHandlers() {
+    var buttons = document.getElementsByClassName("buy-button");
+    
+    for (let i = 0; i < buttons.length; i++) {
+        buttons[i].addEventListener("click", handleClick)
+    }
+}
+
+function handleClick(e) {
+    var id = e.target.id.split("button-")[1];
+    var product = productList.groups.find(item => item.id === id);
+    addedProducts.push(product.id);
+    localStorage.setItem("addedItems", JSON.stringify(addedProducts));
+
+    setItemsInCart();
+}
+
+function setItemsInCart() {
+    var itemsInCart = document.querySelector("#checkout-badge");
+    itemsInCart.innerText = JSON.parse(localStorage.getItem("addedItems")).length;
 }

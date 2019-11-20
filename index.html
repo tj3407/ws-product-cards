@@ -12,7 +12,14 @@
     <title>WS Products</title>
 </head>
 <body class="wsui">
-    <header><h1 class="text-center">WS Product List</h1></header>
+    <header>
+        <div class="clearfix ml-5 mt-3 mr-5">
+            <h1 class="text-center float-left">WS</h1>
+            <button type="button" id="checkout" class="float-right btn btn-outline-dark margin-sm">
+                Checkout <span class="badge badge-light" id="checkout-badge">0</span>
+            </button>
+        </div>
+    </header>
     <hr>
     <main>
         <div id="products" class="container">

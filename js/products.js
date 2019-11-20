@@ -3,7 +3,6 @@ var addedProducts = [];
 
 $.getJSON("./metadata/products.json", function(data) {
     productList = data;
-    showProducts(productList.groups);
 });
 
 $(document).ready(function() {
@@ -12,6 +11,7 @@ $(document).ready(function() {
         addedProducts.push(...itemsInStorage)
         setItemsInCart();
     };
+    showProducts(productList.groups);
     addClickHandlers("buy");
 })
 
@@ -205,9 +205,10 @@ document.getElementById("checkout").addEventListener("click", function() {
 })
 
 function showCheckoutPage() {
-    var list = JSON.parse(localStorage.getItem("addedItems"));
+    var list = JSON.parse(localStorage.getItem("addedItems")) || [];
     var productsAddedToCart = {};
     list.map(item => {
+        if (!item) return;
         if (!productsAddedToCart[item]) {
             productsAddedToCart[item] = 1;
         } else {

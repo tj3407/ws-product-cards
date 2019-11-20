@@ -35,7 +35,10 @@ function cards(product) {
     var $cardText = document.createElement("p");
     $cardText.setAttribute("class", "card-text");
 
-    $cardText.append(name);
+    var productPrice = renderPrice(price);
+
+    $cardText.innerHTML = name;
+    $cardText.append(productPrice);
     $cardBody.append($cardText);
     $cardDiv.append(imageSlider);
     $cardDiv.append($cardBody);
@@ -110,4 +113,18 @@ function renderCarouselControl(dir, id) {
     $control.append($sr);
 
     return $control;
+}
+
+function renderPrice(price) {
+    var {regular, selling} = price;
+    var $price = document.createElement("span");
+    var formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+    });
+
+    $price.append(formatter.format(regular));
+    $price.setAttribute("class", "font-weight-bold d-block price");
+
+    return $price;
 }

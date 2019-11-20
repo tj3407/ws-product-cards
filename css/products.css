@@ -1,28 +1,35 @@
-.wsui h1{
-    margin: 20px;
-    font-family: "Times New Roman", Times, serif;
-    text-transform: uppercase;
+.wsui h1 {
+  margin: 20px;
+  font-family: "Times New Roman", Times, serif;
+  text-transform: uppercase;
 }
 
-.wsui .row{
-    justify-content: center;
+.wsui .row {
+  justify-content: center;
 }
 
-.wsui footer{
-    margin: 20px;
+.wsui footer {
+  margin: 20px;
 }
 
-.wsui .card{
-    max-width: 250px;
-    margin: 10px;
-    cursor: pointer;
+.wsui .card {
+  max-width: 250px;
+  min-height: 400px;
+  margin: 10px;
+  cursor: pointer;
 }
 
-.wsui .card-text{
-    font-size: .8rem;
+.wsui .card-text {
+  font-size: 0.8rem;
 }
 
-.wsui img{
-    width: 250px;
-    height: 250px;
+.wsui img {
+  width: 250px;
+  height: 250px;
 }
+
+.wsui .price {
+  position: absolute;
+  bottom: 20px;
+}
+

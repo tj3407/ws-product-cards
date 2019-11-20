@@ -8,6 +8,7 @@ NOTES:
     - Products are loaded from metadata/products.json file
     - User will be shown a list of products in card format with image, description, price and 'buy' button
     - Clicking on 'Buy' will add the product in localStorage
+    - Clicking on 'Buy' will show a success modal indicating item has been added to cart
     - A checkout link is also shown in the header with a value. Clicking 'Buy' on a particular item will increment this value
 
     Checkout Page:

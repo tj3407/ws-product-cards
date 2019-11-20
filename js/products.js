@@ -3,15 +3,15 @@ var addedProducts = [];
 
 $.getJSON("./metadata/products.json", function(data) {
     productList = data;
+    showProducts(productList.groups);
 });
 
-$(document).ready(function() {
+document.addEventListener("load", function() {
     var itemsInStorage = JSON.parse(localStorage.getItem("addedItems"));
     if (itemsInStorage) {
         addedProducts.push(...itemsInStorage)
         setItemsInCart();
     };
-    showProducts(productList.groups);
     addClickHandlers("buy");
 })
 

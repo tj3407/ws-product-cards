@@ -1,7 +1,7 @@
 var productList = {};
 var addedProducts = [];
 
-$.getJSON("../metadata/products.json", function(data) {
+$.getJSON("./metadata/products.json", function(data) {
     productList = data;
     showProducts(productList.groups);
 });

@@ -73,6 +73,8 @@ function cards(product) {
     $buyButton.setAttribute("class", "btn btn-dark btn-sm buy-button");
     $buyButton.setAttribute("type", "button");
     $buyButton.setAttribute("id", `button-${id}`);
+    $buyButton.setAttribute("data-toggle", "modal");
+    $buyButton.setAttribute("data-target", "#confirmModal");
     $buyButton.innerText = "Buy";
 
     $cardText.innerHTML = name;
@@ -319,7 +321,6 @@ for (let i = 0; i < storageOptions.length; i++) {
                 break;
         }
         localStorage.setItem("storageOption", e.target.value);
-        // addedProducts = [];
         setItemsInCart();
     })
 }

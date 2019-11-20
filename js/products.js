@@ -229,7 +229,7 @@ function renderCartItems(products) {
 
     var html = `<div class="row mb-4">
                     <div class="col">
-                        <a href="/"><- Continue Shopping</a>
+                        <a href="/ws-product-cards/"><- Continue Shopping</a>
                     </div>
                 </div>
                 ${productItems.map(product => {

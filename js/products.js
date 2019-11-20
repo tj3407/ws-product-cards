@@ -12,7 +12,7 @@ $(document).ready(function() {
         addedProducts.push(...itemsInStorage)
         setItemsInCart();
     };
-    addClickHandlers();
+    addClickHandlers("buy");
 })
 
 function showProducts(products) {
@@ -155,11 +155,11 @@ function renderPrice(price) {
 /**
  * Add event listeners on buy buttons for click
  */
-function addClickHandlers() {
-    var buttons = document.getElementsByClassName("buy-button");
+function addClickHandlers(action) {
+    var buttons = document.getElementsByClassName(`${action}-button`);
     
     for (let i = 0; i < buttons.length; i++) {
-        buttons[i].addEventListener("click", handleClick)
+        buttons[i].addEventListener("click", (e) => handleClick(e, action))
     }
 }
 
@@ -169,14 +169,30 @@ function addClickHandlers() {
  * 
  * Click handler for buy button
  */
-function handleClick(e) {
+function handleClick(e, action) {
     var id = e.target.id.split("button-")[1];
     var product = productList.groups.find(item => item.id === id);
 
-    addedProducts.push(product.id);
+    switch (action) {
+        case "buy":
+            addedProducts.push(product.id);
+            break;
+            
+        case "remove":
+            var index = addedProducts.indexOf(id);
+            addedProducts.splice(index, 1);
+            break;
+        
+        default:
+            break;
+    }
+                
     localStorage.setItem("addedItems", JSON.stringify(addedProducts));
-
     setItemsInCart();
+
+    if (action === "remove") {
+        showCheckoutPage();
+    }
 }
 
 function setItemsInCart() {
@@ -200,6 +216,7 @@ function showCheckoutPage() {
     })
 
     $(".container").html(renderCartItems(list));
+    addClickHandlers("remove");
 }
 
 function renderCartItems(products) {
@@ -231,7 +248,7 @@ function renderCartItems(products) {
                                                 <p class="d-inline-flex">${formatter.format(product.price.regular)}</p>
                                             </div>
                                             <div class="col-6 col-md-3 text-right">
-                                                <button class="btn btn-dark btn-sm button-remove-${product.id}">Remove</button>
+                                                <button class="btn btn-dark btn-sm remove-button" id="button-${product.id}">Remove</button>
                                             </div>
                                         </div>
                                     </div>
@@ -240,8 +257,7 @@ function renderCartItems(products) {
                         </div>`
                     )
                 })}
-                
-                `
+            `
   return html;
 }
 

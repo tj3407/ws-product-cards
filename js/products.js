@@ -1,5 +1,6 @@
 var productList = {};
 var addedProducts = [];
+var storageOption = localStorage.getItem("storageOption") ? (localStorage.getItem("storageOption") === "localStorage" ? localStorage : sessionStorage) : localStorage;
 
 $.getJSON("./metadata/products.json", function(data) {
     productList = data;
@@ -7,7 +8,15 @@ $.getJSON("./metadata/products.json", function(data) {
 });
 
 $(document).ready(function() {
-    var itemsInStorage = JSON.parse(localStorage.getItem("addedItems"));
+    // Check if storage option is set in localStorage - use localStorage as default to store products added to cart
+    var option = localStorage.getItem("storageOption");
+    if (!option) {
+        localStorage.setItem("storageOption", "localStorage");
+    } else {
+        document.getElementById(option).setAttribute("checked", true);
+    }
+
+    var itemsInStorage = JSON.parse(storageOption.getItem("addedItems"));
     if (itemsInStorage) {
         addedProducts.push(...itemsInStorage)
         setItemsInCart();
@@ -200,7 +209,7 @@ function handleClick(e, action) {
             break;
     }
                 
-    localStorage.setItem("addedItems", JSON.stringify(addedProducts));
+    storageOption.setItem("addedItems", JSON.stringify(addedProducts));
     setItemsInCart();
 
     if (action === "remove") {
@@ -213,7 +222,8 @@ function handleClick(e, action) {
  */
 function setItemsInCart() {
     var itemsInCart = document.querySelector("#checkout-badge");
-    itemsInCart.innerText = JSON.parse(localStorage.getItem("addedItems")).length;
+    var items = JSON.parse(storageOption.getItem("addedItems"));
+    itemsInCart.innerText = items && items.length || 0;
 }
 
 document.getElementById("checkout").addEventListener("click", function() {
@@ -224,7 +234,7 @@ document.getElementById("checkout").addEventListener("click", function() {
  * Render the checkout page
  */
 function showCheckoutPage() {
-    var list = JSON.parse(localStorage.getItem("addedItems")) || [];
+    var list = JSON.parse(storageOption.getItem("addedItems")) || [];
     var productsAddedToCart = {};
     list.map(item => {
         if (!item) return;
@@ -284,6 +294,34 @@ function renderCartItems(products) {
                 })}
             `
   return html;
+}
+
+/**
+ * Add click event listener for radio option to select between localStorage and sessionStorage
+ * at the bottom of the Main Products page.
+ * 
+ * Whenever an option is selected, cart items are cleared from both the application and browser storage
+ */
+var storageOptions = document.getElementsByTagName("input")
+for (let i = 0; i < storageOptions.length; i++) {
+    storageOptions[i].addEventListener("click", function(e) {
+        switch (e.target.value) {
+            case "sessionStorage":
+                sessionStorage.setItem("addedItems", localStorage.getItem("addedItems"));
+                localStorage.removeItem("addedItems");
+                storageOption = sessionStorage;
+                break;
+        
+            default:
+                localStorage.setItem("addedItems", sessionStorage.getItem("addedItems"));
+                sessionStorage.removeItem("addedItems");
+                storageOption = localStorage;
+                break;
+        }
+        localStorage.setItem("storageOption", e.target.value);
+        // addedProducts = [];
+        setItemsInCart();
+    })
 }
 
 /**

@@ -3,7 +3,7 @@ var addedProducts = [];
 
 $.getJSON("./metadata/products.json", function(data) {
     productList = data;
-    showProducts(productList.groups);
+    showProducts(productList.groups, productList.name);
 });
 
 $(document).ready(function() {
@@ -14,7 +14,20 @@ $(document).ready(function() {
     };
 })
 
-function showProducts(products) {
+/**
+ * 
+ * @param {Array} products 
+ * @param {String} category - Optional
+ * 
+ * Method to render the products from the products Array. Will also show the category name if defined
+ */
+function showProducts(products, category) {
+    if (category) {
+        var $category = document.createElement("p");
+        $category.innerText = category;
+        document.getElementById("products").prepend($category);
+    }
+
     $(".row").html(products.map(item => {
             return cards(item);
         })
@@ -153,7 +166,7 @@ function renderPrice(price) {
 }
 
 /**
- * Add event listeners on buy buttons for click
+ * Add event listeners on buy and remove buttons for click
  */
 function addClickHandlers(action) {
     var buttons = document.getElementsByClassName(`${action}-button`);
@@ -195,6 +208,9 @@ function handleClick(e, action) {
     }
 }
 
+/**
+ * Set the number of items in the Checkout link in header
+ */
 function setItemsInCart() {
     var itemsInCart = document.querySelector("#checkout-badge");
     itemsInCart.innerText = JSON.parse(localStorage.getItem("addedItems")).length;
@@ -204,6 +220,9 @@ document.getElementById("checkout").addEventListener("click", function() {
     showCheckoutPage();
 })
 
+/**
+ * Render the checkout page
+ */
 function showCheckoutPage() {
     var list = JSON.parse(localStorage.getItem("addedItems")) || [];
     var productsAddedToCart = {};
@@ -220,6 +239,11 @@ function showCheckoutPage() {
     addClickHandlers("remove");
 }
 
+/**
+ * 
+ * @param {Array} products - list of product ids
+ * Render the products for the checkout page by mapping through the products Array
+ */
 function renderCartItems(products) {
     var productItems = products.map(item => productList.groups.find(product => product.id === item));
     var formatter = new Intl.NumberFormat('en-US', {
@@ -262,6 +286,9 @@ function renderCartItems(products) {
   return html;
 }
 
+/**
+ * TODO: Confirm buy modal
+ */
 function showConfirmAddToCart() {
     var $modal = document.createElement("div");
     var $modalDialog = document.createElement("div");
